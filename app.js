@@ -211,6 +211,7 @@
     const title=stages[state.stage];
     const subtitle=["Record each transaction’s date, account titles, posting references, debits, and credits.","Post entries to each ledger account. Use GJ1 in Ref. for the source journal page, then calculate the running balance.","List every account with its ending balance on the correct side.","Use the adjusted balances to calculate the month’s result.","Carry net income and drawings into the owner’s ending equity.","Classify all assets, liabilities, and ending equity."][state.stage];
     const reviewing = state.stage < state.completed;
+    $("tutor-fill").disabled = reviewing;
     const previous = state.stage > 0 ? '<button type="button" class="quiet-button" id="previous-worksheet">Previous worksheet</button>' : "";
     const primary = reviewing
       ? (state.completed < stages.length ? '<button type="button" class="primary small" id="continue-worksheet">Continue practice</button>' : "")
@@ -281,7 +282,7 @@
   const tutorReady = tutorEndpoint
     ? "Your question and practice scenario are sent to the tutor service."
     : "AI chat is awaiting setup. Guided hints are available.";
-  const tutorWelcome = "Ask for a hint or a direct answer. For example, “Show me the journal entry for transaction 1.”";
+  const tutorWelcome = "Ask for a hint or a direct answer. To enter answers in your current worksheet, select Fill empty answers. Then review them and press Check my work.";
   let tutorRequest;
   let tutorHistory = [];
 
@@ -310,6 +311,25 @@
       return `${account} is account ${no} and normally has a ${normal} balance. If you’re recording a transaction, decide whether it increases or decreases before choosing a column.`;
     }
     return worksheetHints[stage];
+  }
+
+  function fillWorksheet() {
+    if (!state || state.stage < state.completed) {
+      addTutorMessage("AKO", "This worksheet is already complete. Select Continue practice to work on your current worksheet.");
+      return;
+    }
+    let filled = 0;
+    const inputs = worksheetInputs();
+    inputs.forEach(input => {
+      if (input.value.trim() || !input.dataset.answer) return;
+      input.value = input.dataset.answer;
+      input.classList.remove("incorrect", "correct");
+      filled++;
+    });
+    state.responses[state.stage] = inputs.map(input => input.value);
+    addTutorMessage("AKO", filled
+      ? `Filled ${filled} empty answers in ${stages[state.stage]} using this practice set’s calculated answers. Review the worksheet, then press Check my work. Your existing entries are saved.`
+      : "There are no empty answers to fill. Review your entries and press Check my work.");
   }
 
   async function askTutor(event) {
@@ -403,6 +423,7 @@
   $("generate").addEventListener("click",start);
   $("tutor-form").addEventListener("submit", askTutor);
   $("tutor-hint").addEventListener("click", () => addTutorMessage("Guided hint", worksheetHints[state.stage]));
+  $("tutor-fill").addEventListener("click", fillWorksheet);
   $("new-set").addEventListener("click",()=>{if(confirm("Start a new set? Your current answers will be cleared."))start();});
   $("toggle-problem").addEventListener("click",()=>{
     const list=$("transactions");list.classList.toggle("hidden");
