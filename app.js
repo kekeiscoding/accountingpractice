@@ -252,11 +252,13 @@
     if(typeof examplesDialog.close==="function") examplesDialog.close();
     else examplesDialog.removeAttribute("open");
   };
-  $("open-examples").addEventListener("click",()=>{
+  const showExamples=()=>{
     renderWorkedExample(0);
     if(typeof examplesDialog.showModal==="function") examplesDialog.showModal();
     else examplesDialog.setAttribute("open","");
-  });
+  };
+  $("open-examples").addEventListener("click",showExamples);
+  $("welcome-examples").addEventListener("click",showExamples);
   $("close-examples").addEventListener("click",closeExamples);
   examplesDialog.addEventListener("click",event=>{if(event.target===examplesDialog)closeExamples();});
 })();
