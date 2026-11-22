@@ -146,7 +146,6 @@ button { cursor: pointer; }
 .preview-journal th:nth-child(2) { width: 38%; }
 .preview-journal th:nth-child(3) { width: 10%; }
 .preview-journal th:nth-child(4), .preview-journal th:nth-child(5) { width: 19.5%; }
-.preview-journal .preview-explanation { color: #827987; font-size: 7px; font-style: italic; }
 .preview-sheet-foot { display: flex; justify-content: space-between; align-items: center; margin-top: 13px; color: #8a838d; font-size: 7px; }
 .preview-progress { padding: 4px 6px; border-radius: 4px; background: #f1e9f3; color: #51245d; font-weight: 700; }
 .primary {
@@ -317,12 +316,11 @@ input.cell:focus { border-color: #588a84; box-shadow: 0 0 0 2px #2d6b661c; }
 input.cell.numeric { text-align: right; font-variant-numeric: tabular-nums; }
 input.cell.correct { border-color: #83b49a; background: #f2f8f4; }
 input.cell.incorrect { border-color: #d28b86; background: #fff6f5; }
-.entry-table th:nth-child(1) { width: 8%; }
-.entry-table th:nth-child(2) { width: 26%; }
-.entry-table th:nth-child(3) { width: 7%; }
-.entry-table th:nth-child(4), .entry-table th:nth-child(5) { width: 12%; }
-.entry-table th:nth-child(6) { width: 29%; }
-.entry-table th:nth-child(7) { width: 6%; }
+.entry-table th:nth-child(1) { width: 13%; }
+.entry-table th:nth-child(2) { width: 37%; }
+.entry-table th:nth-child(3) { width: 9%; }
+.entry-table th:nth-child(4), .entry-table th:nth-child(5) { width: 17%; }
+.entry-table th:nth-child(6) { width: 7%; }
 .total-row td { background: #f7f8fa; font-weight: 700; }
 .gap-row td { height: 12px; border: 0; background: white; }
 .form-grid { display: grid; grid-template-columns: minmax(170px, 1fr) 155px; max-width: 600px; margin: 8px auto; }
@@ -474,7 +472,7 @@ input.cell.incorrect { border-color: #d28b86; background: #fff6f5; }
 @media (max-width: 900px) {
   .rail-foot { display: none; }
   .transaction-list { grid-template-columns: 1fr; }
-  .entry-table { min-width: 720px; }
+  .entry-table { min-width: 480px; }
   .welcome { grid-template-columns: 1fr; gap: 28px; }
   .welcome-copy { max-width: 700px; }
   .home-preview { width: 100%; }

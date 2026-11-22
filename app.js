@@ -55,7 +55,7 @@
     add(27, `Paid employees ${peso(salaries)} in salaries.`, [line("Salaries Expense","debit",salaries),line("Cash","credit",salaries)]);
 
     const journal = [];
-    tx.forEach((t, ti) => t.lines.forEach((l, li) => journal.push({ date: displayDate(t.date), account: l.account, pr: accounts[l.account].no, debit: l.debit, credit: l.credit, explanation: li === 0 ? `To record ${t.text[0].toLowerCase()}${t.text.slice(1)}` : "" , transaction: ti + 1 })));
+    tx.forEach((t, ti) => t.lines.forEach(l => journal.push({ date: displayDate(t.date), account: l.account, pr: accounts[l.account].no, debit: l.debit, credit: l.credit, transaction: ti + 1 })));
     const balances = Object.fromEntries(Object.keys(accounts).map(a => [a, 0]));
     journal.forEach(j => balances[j.account] += accounts[j.account].normal === "debit" ? j.debit - j.credit : j.credit - j.debit);
     const totalDebits = journal.reduce((s,j)=>s+j.debit,0);
@@ -86,13 +86,13 @@
   const workedExamples = [
     {
       title: "General Journal",
-      intro: "Record each transaction with the debit account first, the credit account indented, the account number in PR, and an explanation.",
-      body: staticTable(["Date","Account Title and Explanation","PR","Debit (₱)","Credit (₱)"],[
-        ["Mar 1","Cash","101","50,000",""],["","Owner's Capital","301","","50,000"],["","To record owner's investment.","","",""],
-        ["Mar 3","Equipment","104","10,000",""],["","Cash","101","","10,000"],["","To record equipment purchased for cash.","","",""],
-        ["Mar 5","Office Supplies","103","2,000",""],["","Accounts Payable","201","","2,000"],["","To record supplies purchased on account.","","",""],
-        ["Mar 10","Cash","101","8,000",""],["","Service Revenue","401","","8,000"],["","To record services provided for cash.","","",""],
-        ["Mar 15","Rent Expense","502","3,000",""],["","Cash","101","","3,000"],["","To record rent paid.","","",""],
+      intro: "Record the debit account first and enter each account number in the PR column.",
+      body: staticTable(["Date","Account Title","PR","Debit (₱)","Credit (₱)"],[
+        ["Mar 1","Cash","101","50,000",""],["","Owner's Capital","301","","50,000"],
+        ["Mar 3","Equipment","104","10,000",""],["","Cash","101","","10,000"],
+        ["Mar 5","Office Supplies","103","2,000",""],["","Accounts Payable","201","","2,000"],
+        ["Mar 10","Cash","101","8,000",""],["","Service Revenue","401","","8,000"],
+        ["Mar 15","Rent Expense","502","3,000",""],["","Cash","101","","3,000"],
         ["","Totals","","73,000","73,000"]
       ])
     },
@@ -134,9 +134,9 @@
   ];
 
   function journalHTML() {
-    const rows = state.journal.map(j=>`<tr><td>${field(j.date)}</td><td>${field(j.account)}</td><td>${field(j.pr)}</td><td>${field(amount(j.debit),"number")}</td><td>${field(amount(j.credit),"number")}</td><td>${field(j.explanation)}</td><td class="rowlabel">${j.transaction}</td></tr>`);
-    rows.push(`<tr class="total-row"><td colspan="3">Totals</td><td>${field(amount(state.totalDebits),"number")}</td><td>${field(amount(state.totalDebits),"number")}</td><td colspan="2"></td></tr>`);
-    return table(["Date","Account title","PR","Debit (₱)","Credit (₱)","Explanation","No."],rows,"entry-table");
+    const rows = state.journal.map(j=>`<tr><td>${field(j.date)}</td><td>${field(j.account)}</td><td>${field(j.pr)}</td><td>${field(amount(j.debit),"number")}</td><td>${field(amount(j.credit),"number")}</td><td class="rowlabel">${j.transaction}</td></tr>`);
+    rows.push(`<tr class="total-row"><td colspan="3">Totals</td><td>${field(amount(state.totalDebits),"number")}</td><td>${field(amount(state.totalDebits),"number")}</td><td></td></tr>`);
+    return table(["Date","Account title","PR","Debit (₱)","Credit (₱)","No."],rows,"entry-table");
   }
   function ledgerHTML() {
     const rows=[];
@@ -188,7 +188,7 @@
   function render() {
     renderSteps();
     const title=stages[state.stage];
-    const subtitle=["Record each transaction with its account titles, posting reference, debit, credit, and a brief explanation.","Post entries to each ledger account. Use GJ1 in Ref. for the source journal page, then calculate the running balance.","List every account with its ending balance on the correct side.","Use the adjusted balances to calculate the month’s result.","Carry net income and drawings into the owner’s ending equity.","Classify all assets, liabilities, and ending equity."][state.stage];
+    const subtitle=["Record each transaction’s date, account titles, posting references, debits, and credits.","Post entries to each ledger account. Use GJ1 in Ref. for the source journal page, then calculate the running balance.","List every account with its ending balance on the correct side.","Use the adjusted balances to calculate the month’s result.","Carry net income and drawings into the owner’s ending equity.","Classify all assets, liabilities, and ending equity."][state.stage];
     $("worksheet").innerHTML=sheetHead(title,subtitle)+contentFor[state.stage]()+`<div class="feedback" id="feedback"></div><div class="sheet-actions"><span class="hint">Enter amounts as numbers. Commas and peso signs are optional.</span><button class="primary small" id="check">Check my work <span>→</span></button></div>`;
     $("check").addEventListener("click",checkAnswers);
   }
