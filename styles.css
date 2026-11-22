@@ -394,6 +394,39 @@ input.cell.incorrect { border-color: #d28b86; background: #fff6f5; }
 .practice-chart .chart-table th:first-child,
 .practice-chart .chart-table td:first-child { width: 32%; }
 .practice-chart .chart-table th { position: sticky; top: 0; }
+.study-tutor {
+  position: fixed;
+  right: max(14px, calc((100vw - 1180px) / 2));
+  bottom: max(12px, env(safe-area-inset-bottom));
+  z-index: 3;
+  width: max-content;
+  max-width: calc(100% - 28px);
+  border: 1px solid var(--line-strong);
+  border-radius: 8px;
+  background: var(--paper);
+  box-shadow: 0 6px 22px #1c304430;
+}
+.study-tutor[open] { width: min(360px, calc(100% - 28px)); }
+.study-tutor summary {
+  padding: 11px 14px;
+  border-radius: 7px;
+  background: var(--navy);
+  color: white;
+  font-size: 13px;
+  font-weight: 700;
+  cursor: pointer;
+}
+.study-tutor[open] summary { border-radius: 7px 7px 0 0; }
+.tutor-panel { display: flex; flex-direction: column; max-height: min(455px, calc(100dvh - 76px)); overflow: auto; }
+.tutor-mode { margin: 0; padding: 8px 12px; color: var(--muted); font-size: 11px; }
+.tutor-log { min-height: 44px; overflow: auto; overscroll-behavior: contain; padding: 0 12px; }
+.tutor-log p { margin: 0 0 8px; padding: 8px; border-radius: 5px; background: var(--soft); font-size: 13px; line-height: 1.45; white-space: pre-wrap; overflow-wrap: anywhere; }
+.tutor-log .tutor-user { background: #edf3f4; }
+.tutor-compose { flex: none; padding: 8px 12px 12px; border-top: 1px solid var(--line); }
+.tutor-form label { display: block; margin: 8px 0 4px; font-size: 12px; font-weight: 600; }
+.tutor-form > div { display: flex; gap: 6px; }
+.tutor-form input { flex: 1; min-width: 0; min-height: 36px; padding: 6px; border: 1px solid var(--line-strong); border-radius: 5px; font-size: 16px; }
+.workspace:has(.study-tutor) { padding-bottom: 64px; }
 .examples-dialog { width: min(960px, calc(100vw - 30px)); }
 .example-tabs { display: flex; gap: 4px; overflow-x: auto; padding-bottom: 8px; border-bottom: 1px solid var(--line); }
 .example-tab { padding: 8px 10px; border: 0; border-radius: 5px; background: transparent; color: var(--muted); white-space: nowrap; font: 600 11px "Segoe UI", Arial, sans-serif; }

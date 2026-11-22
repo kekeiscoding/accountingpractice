@@ -230,7 +230,116 @@
     }
   }
 
+  const worksheetHints = [
+    "Read one transaction at a time. Identify the accounts that changed and whether each increased or decreased. Then record the debit and credit and check that the amounts match.",
+    "Start with one account. Find every journal line for that account, copy the date and amount to the matching debit or credit column, and update the running balance from the previous row.",
+    "Take each account’s ending balance from its ledger. Enter that balance once, on the debit or credit side where it ends. Then compare the column totals.",
+    "Bring in Service Revenue and the expense balances from the trial balance. Add the expenses, then subtract that total from revenue to find net income or loss.",
+    "Start with the owner’s capital and include net income or subtract a net loss. Subtract the owner’s drawings to find ending equity.",
+    "Group ending balances into assets and liabilities. Bring in ending equity from the Statement of Changes in Equity, then check that assets equal liabilities plus equity."
+  ];
+  const tutorReady = "On-device AI when available. Guided hints work in any browser.";
+  const tutorWelcome = "Ask about an account, a transaction, or the worksheet you’re on. I’ll help you work out your next step.";
+  let tutorRequest;
+  let tutorHistory = [];
+
+  function addTutorMessage(speaker, message) {
+    const log = $("tutor-log");
+    const bubble = document.createElement("p");
+    const label = document.createElement("strong");
+    label.textContent = speaker + ": ";
+    bubble.classList.toggle("tutor-user", speaker === "You");
+    bubble.append(label, message);
+    log.append(bubble);
+    log.scrollTop = log.scrollHeight;
+  }
+
+  function guidedReply(question, stage) {
+    const topic = norm(question).replaceAll("’", "'");
+    if (/\b(pr|ref|posting reference)\b/.test(topic)) {
+      return "In the General Journal, PR is the account number from the Chart of Accounts. In this General Ledger, Ref. is the source journal page, GJ1. The account number belongs in the ledger account header.";
+    }
+    if (/\b(debits?|credits?|normal balance)\b/.test(topic)) {
+      return "Assets, expenses, and drawings normally carry debit balances. Liabilities, owner’s capital, and revenue normally carry credit balances. An increase goes on the normal side, and a decrease goes on the opposite side.";
+    }
+    const account = Object.keys(accounts).find(name => topic.includes(name.toLowerCase()));
+    if (account) {
+      const { no, normal } = accounts[account];
+      return `${account} is account ${no} and normally has a ${normal} balance. If you’re recording a transaction, decide whether it increases or decreases before choosing a column.`;
+    }
+    return worksheetHints[stage];
+  }
+
+  async function askTutor(event) {
+    event.preventDefault();
+    const input = $("tutor-question");
+    const question = input.value.trim();
+    if (!question || tutorRequest) return;
+
+    const request = new AbortController();
+    tutorRequest = request;
+    const stage = state.stage;
+    const transactions = state.tx;
+    const mode = $("tutor-mode");
+    const send = $("tutor-send");
+    const model = globalThis.LanguageModel;
+    const timeout = setTimeout(() => request.abort(), 45000);
+    let session;
+    let reply = guidedReply(question, stage);
+    let speaker = "Guided hint";
+    addTutorMessage("You", question);
+    input.value = "";
+    send.disabled = true;
+    try {
+      if (model && await model.availability() !== "unavailable" && !request.signal.aborted) {
+        mode.textContent = "Preparing on-device AI…";
+        session = await model.create({
+          signal: request.signal,
+          initialPrompts: [{
+            role: "system",
+            content: "You tutor introductory accounting for AKO. Give short, plain English hints and explain the next step. Stay on accounting. Do not provide completed worksheet entries, exact answers for the active exercise, or fill in a worksheet. If the question is ambiguous, ask which row or transaction the student means."
+          }]
+        });
+        mode.textContent = "AKO is working on a hint…";
+        const context = {
+          worksheet: stages[stage],
+          worksheetHint: worksheetHints[stage],
+          referenceFormat: "Journal PR uses the account number. Ledger Ref. uses GJ1, the source page.",
+          chartOfAccounts: accounts,
+          transactions: transactions.map(({ date, text }) => `${displayDate(date)}: ${text}`),
+          recentConversation: tutorHistory.slice(-4),
+          question
+        };
+        const answer = await session.prompt(JSON.stringify(context), { signal: request.signal });
+        if (answer.trim()) {
+          reply = answer.trim();
+          speaker = "AKO AI";
+        }
+      }
+    } catch {
+      // The guided reply is available if the browser model cannot respond.
+    } finally {
+      clearTimeout(timeout);
+      session?.destroy();
+      if (tutorRequest === request) {
+        addTutorMessage(speaker, reply);
+        tutorHistory = [...tutorHistory.slice(-2), { question, reply }];
+        mode.textContent = speaker === "AKO AI" ? "On-device AI active" : "Guided hints mode";
+        send.disabled = false;
+        tutorRequest = undefined;
+      }
+    }
+  }
+
   function start() {
+    tutorRequest?.abort();
+    tutorRequest = undefined;
+    tutorHistory = [];
+    $("tutor-send").disabled = false;
+    $("tutor-question").value = "";
+    $("tutor-mode").textContent = tutorReady;
+    $("tutor-log").replaceChildren();
+    addTutorMessage("AKO", tutorWelcome);
     state=makeSet(); state.stage=0;
     $("practice-chart-body").append($("chart-table"));
     $("practice-chart").open=true;
@@ -241,6 +350,8 @@
     render(); window.scrollTo({top:0,behavior:"smooth"});
   }
   $("generate").addEventListener("click",start);
+  $("tutor-form").addEventListener("submit", askTutor);
+  $("tutor-hint").addEventListener("click", () => addTutorMessage("Guided hint", worksheetHints[state.stage]));
   $("new-set").addEventListener("click",()=>{if(confirm("Start a new set? Your current answers will be cleared."))start();});
   $("toggle-problem").addEventListener("click",()=>{
     const list=$("transactions");list.classList.toggle("hidden");

@@ -6,7 +6,7 @@
   <meta name="theme-color" content="#f2f4f6" />
   <title>AKO | Accounting Knowledge Overview</title>
   <link rel="icon" href="ako-mark.svg" type="image/svg+xml" />
-  <link rel="stylesheet" href="styles.css?v=floating-chart" />
+  <link rel="stylesheet" href="styles.css?v=study-tutor" />
 </head>
 <body>
   <header class="topbar">
@@ -72,9 +72,26 @@
         </div>
         <section class="worksheet" id="worksheet"></section>
       </div>
+      <details class="study-tutor" id="study-tutor">
+        <summary>Ask AKO</summary>
+        <div class="tutor-panel">
+          <p class="tutor-mode" id="tutor-mode" role="status">On-device AI when available. Guided hints work in any browser.</p>
+          <div class="tutor-log" id="tutor-log" role="log" aria-label="Tutor conversation" tabindex="0"></div>
+          <div class="tutor-compose">
+            <button class="quiet-button" id="tutor-hint" type="button">Get a worksheet hint</button>
+            <form class="tutor-form" id="tutor-form">
+              <label for="tutor-question">Ask a question</label>
+              <div>
+                <input id="tutor-question" maxlength="400" required placeholder="e.g. What goes in PR?" />
+                <button class="primary small" id="tutor-send" type="submit">Send</button>
+              </div>
+            </form>
+          </div>
+        </div>
+      </details>
     </section>
     <footer class="site-foot"><span>AKO · ICT 141</span><span>Amounts in Philippine pesos (₱)</span></footer>
   </main>
-  <script src="app.js?v=floating-chart"></script>
+  <script src="app.js?v=study-tutor"></script>
 </body>
 </html>
