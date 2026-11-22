@@ -3,12 +3,12 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <meta name="theme-color" content="#f5f5f7" />
+  <meta name="theme-color" content="#f2f4f6" />
   <title>Accounting Cycle Practice</title>
   <link rel="stylesheet" href="styles.css" />
 </head>
 <body>
-  <header class="topbar"><a class="brand" href="#" aria-label="Ledger home"><span class="brand-mark">L</span><span>ledger<span class="brand-light">.study</span></span></a><div class="top-tools"><button class="chart-trigger" id="open-examples">Worked examples <span aria-hidden="true">↗</span></button><button class="chart-trigger" id="open-chart">Chart of Accounts <span aria-hidden="true">↗</span></button><div class="top-note"><span class="live-dot"></span> ACCOUNTING PRACTICE</div></div></header>
+  <header class="topbar"><a class="brand" href="#" aria-label="Ledger Practice home"><span class="brand-mark">L</span><span>Ledger<span class="brand-light"> · ICT 141</span></span></a><nav class="top-tools" aria-label="Study resources"><button class="chart-trigger" id="open-examples">Worked examples</button><button class="chart-trigger" id="open-chart">Chart of Accounts</button></nav></header>
   <dialog class="chart-dialog" id="chart-dialog" aria-labelledby="chart-title">
     <div class="chart-dialog-head"><div><div class="eyebrow">REFERENCE</div><h2 id="chart-title">Chart of Accounts</h2></div><button class="close-chart" id="close-chart" aria-label="Close chart">×</button></div>
     <table class="chart-table"><thead><tr><th>Account No.</th><th>Account Title</th></tr></thead><tbody>
@@ -22,10 +22,24 @@
   </dialog>
   <main class="shell">
     <section class="welcome" id="welcome">
-      <div class="eyebrow">ICT 141 · ACCOUNTING PRACTICE</div>
-      <h1>Practice the accounting cycle</h1>
-      <p>Work through a fresh set of service-business transactions, from the general journal through the financial statements. Check each worksheet before moving to the next.</p>
-      <div class="welcome-actions"><button class="primary" id="generate">Start a practice set <span aria-hidden="true">→</span></button><span class="micro">Each set uses new dates and amounts.</span></div>
+      <div class="welcome-copy">
+        <div class="eyebrow">ACCOUNTING PRACTICE · ICT 141</div>
+        <h1>Accounting cycle<br />practice</h1>
+        <p>Practice recording service-business transactions and preparing financial statements. Each set has new dates and amounts, with a worksheet for every step of the cycle.</p>
+        <div class="welcome-actions"><button class="primary" id="generate">Start a practice set <span aria-hidden="true">→</span></button><span class="micro">Your work is checked before you continue.</span></div>
+      </div>
+      <aside class="cycle-preview" aria-label="Accounting practice workflow">
+        <div class="cycle-preview-head"><div><div class="eyebrow">PRACTICE WORKFLOW</div><h2>Six connected worksheets</h2></div><span class="cycle-tag">01–06</span></div>
+        <ol class="cycle-list">
+          <li><span class="cycle-number">01</span><span>General Journal</span><span class="cycle-kind">Record</span></li>
+          <li><span class="cycle-number">02</span><span>General Ledger</span><span class="cycle-kind">Post</span></li>
+          <li><span class="cycle-number">03</span><span>Trial Balance</span><span class="cycle-kind">Verify</span></li>
+          <li><span class="cycle-number">04</span><span>Income Statement</span><span class="cycle-kind">Report</span></li>
+          <li><span class="cycle-number">05</span><span>Changes in Equity</span><span class="cycle-kind">Update</span></li>
+          <li><span class="cycle-number">06</span><span>Balance Sheet</span><span class="cycle-kind">Present</span></li>
+        </ol>
+        <p class="cycle-preview-note">Complete each worksheet to unlock the next one.</p>
+      </aside>
     </section>
 
     <section class="workspace hidden" id="workspace">

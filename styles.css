@@ -90,24 +90,25 @@ button { cursor: pointer; }
 .welcome {
   min-height: 0;
   max-width: none;
-  margin: 42px 0 46px;
-  padding: 48px 52px 44px;
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-  justify-content: center;
+  margin: 34px 0 42px;
+  padding: 42px 46px;
+  display: grid;
+  grid-template-columns: minmax(0, 1.1fr) minmax(340px, .9fr);
+  align-items: center;
+  gap: clamp(32px, 6vw, 76px);
   background: var(--paper);
   border: 1px solid var(--line);
   border-radius: 9px;
 }
+.welcome-copy { max-width: 560px; }
 .welcome h1 {
-  max-width: 760px;
-  margin: 13px 0 14px;
+  max-width: 500px;
+  margin: 16px 0 15px;
   color: var(--navy-deep);
-  font-size: clamp(34px, 4vw, 46px);
+  font-size: clamp(36px, 4vw, 48px);
   font-weight: 650;
-  line-height: 1.12;
-  letter-spacing: -1.3px;
+  line-height: 1.1;
+  letter-spacing: -1.45px;
 }
 .welcome h1 span { color: var(--navy-deep); }
 .welcome > p {
@@ -117,7 +118,19 @@ button { cursor: pointer; }
   font-size: 15px;
   line-height: 1.65;
 }
+.welcome-copy > p { max-width: 500px; margin: 0; color: var(--muted); font-size: 15px; line-height: 1.65; }
 .welcome-actions { display: flex; align-items: center; gap: 15px; margin-top: 25px; }
+.cycle-preview { padding: 22px 23px 17px; border: 1px solid var(--line); border-radius: 7px; background: #f8f9fa; }
+.cycle-preview-head { display: flex; align-items: flex-start; justify-content: space-between; gap: 12px; padding-bottom: 15px; border-bottom: 1px solid var(--line); }
+.cycle-preview-head .eyebrow { font-size: 9px; }
+.cycle-preview-head h2 { margin: 5px 0 0; color: var(--navy); font-size: 16px; font-weight: 650; letter-spacing: -.2px; }
+.cycle-tag { padding: 4px 7px; border: 1px solid var(--line-strong); border-radius: 4px; color: var(--muted); background: white; font: 600 9px "Segoe UI", Arial, sans-serif; }
+.cycle-list { display: grid; gap: 0; margin: 8px 0 12px; padding: 0; list-style: none; }
+.cycle-list li { min-height: 36px; display: grid; grid-template-columns: 30px minmax(0,1fr) auto; align-items: center; gap: 9px; border-bottom: 1px solid #e8ecef; color: #344351; font-size: 11px; font-weight: 600; }
+.cycle-list li:last-child { border-bottom: 0; }
+.cycle-number { color: var(--teal); font: 600 10px "Segoe UI", Arial, sans-serif; font-variant-numeric: tabular-nums; }
+.cycle-kind { color: var(--faint); font-size: 10px; font-weight: 400; }
+.cycle-preview-note { margin: 0; padding-top: 11px; border-top: 1px solid var(--line); color: var(--muted); font-size: 10px; line-height: 1.5; }
 .primary {
   min-height: 40px;
   padding: 10px 16px;
@@ -366,6 +379,9 @@ input.cell.incorrect { border-color: #d28b86; background: #fff6f5; }
   .rail-foot { display: none; }
   .transaction-list { grid-template-columns: 1fr; }
   .entry-table { min-width: 720px; }
+  .welcome { grid-template-columns: 1fr; gap: 28px; }
+  .welcome-copy { max-width: 700px; }
+  .cycle-preview { width: 100%; }
 }
 @media (max-width: 600px) {
   .topbar { min-height: 56px; padding: 8px 14px; gap: 8px; }
@@ -374,8 +390,9 @@ input.cell.incorrect { border-color: #d28b86; background: #fff6f5; }
   .chart-trigger { padding: 7px 8px; font-size: 10px; }
   .shell { width: calc(100% - 28px); }
   .welcome { margin: 18px 0 25px; padding: 30px 24px; }
+  .welcome { gap: 24px; }
   .welcome h1 { font-size: 34px; letter-spacing: -.8px; }
-  .welcome > p { font-size: 14px; }
+  .welcome-copy > p { font-size: 14px; }
   .welcome-actions { align-items: flex-start; flex-direction: column; gap: 10px; }
   .worksheet { padding: 18px 13px; }
   .sheet-head { gap: 8px; }
@@ -387,4 +404,5 @@ input.cell.incorrect { border-color: #d28b86; background: #fff6f5; }
   .example-tab { padding: 7px 8px; font-size: 10px; }
   .example-content { max-height: 68vh; }
   .example-form { grid-template-columns: minmax(140px, 1fr) 110px; }
+  .cycle-preview { padding: 17px 15px 13px; }
 }
