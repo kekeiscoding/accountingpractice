@@ -4,11 +4,21 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <meta name="theme-color" content="#f2f4f6" />
-  <title>Accounting Cycle Practice</title>
-  <link rel="stylesheet" href="styles.css" />
+  <title>AKO | Accounting Knowledge Overview</title>
+  <link rel="icon" href="ako-mark.svg" type="image/svg+xml" />
+  <link rel="stylesheet" href="styles.css?v=ako" />
 </head>
 <body>
-  <header class="topbar"><a class="brand" href="#" aria-label="Ledger Practice home"><span class="brand-mark">L</span><span>Ledger<span class="brand-light"> · ICT 141</span></span></a><nav class="top-tools" aria-label="Study resources"><button class="chart-trigger" id="open-examples">Worked examples</button><button class="chart-trigger" id="open-chart">Chart of Accounts</button></nav></header>
+  <header class="topbar">
+    <a class="brand" href="#" aria-label="AKO — Accounting Knowledge Overview home">
+      <img class="brand-mark" src="ako-mark.svg" width="38" height="38" alt="" />
+      <span class="brand-copy"><span class="brand-name">AKO</span><span class="brand-description">Accounting Knowledge Overview</span></span>
+    </a>
+    <nav class="top-tools" aria-label="Study resources">
+      <button class="chart-trigger" id="open-examples">Worked examples</button>
+      <button class="chart-trigger" id="open-chart">Chart of Accounts</button>
+    </nav>
+  </header>
   <dialog class="chart-dialog" id="chart-dialog" aria-labelledby="chart-title">
     <div class="chart-dialog-head"><div><div class="eyebrow">REFERENCE</div><h2 id="chart-title">Chart of Accounts</h2></div><button class="close-chart" id="close-chart" aria-label="Close chart">×</button></div>
     <table class="chart-table"><thead><tr><th>Account No.</th><th>Account Title</th></tr></thead><tbody>
@@ -31,7 +41,7 @@
       </div>
       <aside class="home-preview" aria-label="Preview of the practice worksheet">
         <div class="preview-window">
-          <div class="preview-windowbar"><span class="preview-brand"><span class="preview-brand-mark">L</span> Ledger Practice</span><span class="preview-sample-label">WORKSHEET PREVIEW</span></div>
+          <div class="preview-windowbar"><span class="preview-brand"><img src="ako-mark.svg" width="15" height="15" alt="" /> AKO</span><span class="preview-sample-label">WORKSHEET PREVIEW</span></div>
           <div class="preview-layout">
             <div class="preview-sidebar"><div class="preview-sidebar-label">PRACTICE SET</div><ol>
               <li class="preview-active"><span>01</span>General Journal</li><li><span>02</span>General Ledger</li><li><span>03</span>Trial Balance</li><li><span>04</span>Income Statement</li><li><span>05</span>Changes in Equity</li><li><span>06</span>Balance Sheet</li>
@@ -59,7 +69,7 @@
         <section class="worksheet" id="worksheet"></section>
       </div>
     </section>
-    <footer class="site-foot"><span>ICT 141 · Accounting Practice</span><span>Amounts in Philippine pesos (₱)</span></footer>
+    <footer class="site-foot"><span>AKO · ICT 141</span><span>Amounts in Philippine pesos (₱)</span></footer>
   </main>
   <script src="app.js?v=worked-examples-2"></script>
 </body>

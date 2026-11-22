@@ -38,24 +38,18 @@ button { cursor: pointer; }
   display: inline-flex;
   align-items: center;
   gap: 10px;
-  color: var(--navy);
+  color: #271b32;
   text-decoration: none;
-  font-size: 15px;
-  font-weight: 700;
-  letter-spacing: -.2px;
-  white-space: nowrap;
 }
-.brand-mark {
-  display: grid;
-  place-items: center;
-  width: 27px;
-  height: 27px;
-  border-radius: 6px;
-  background: var(--navy);
-  color: white;
-  font: 600 15px Georgia, serif;
+.brand:focus-visible {
+  outline: 2px solid #611f69;
+  outline-offset: 4px;
+  border-radius: 4px;
 }
-.brand-light { color: var(--muted); font-weight: 400; }
+.brand-mark { display: block; flex: none; }
+.brand-copy { display: grid; gap: 3px; }
+.brand-name { font-size: 23px; font-weight: 750; letter-spacing: -.04em; line-height: 1; }
+.brand-description { color: #635b66; font-size: 11px; font-weight: 500; line-height: 1.2; }
 .top-tools { display: flex; align-items: center; gap: 9px; }
 .top-note {
   display: flex;
@@ -131,7 +125,6 @@ button { cursor: pointer; }
 .preview-window { overflow: hidden; border: 1px solid #dedfe5; border-radius: 7px; background: white; box-shadow: 0 3px 10px #251b2a12; transform: rotate(-.4deg); }
 .preview-windowbar { height: 37px; display: flex; justify-content: space-between; align-items: center; padding: 0 12px; border-bottom: 1px solid #ece9ed; background: #fff; }
 .preview-brand { display: flex; align-items: center; gap: 6px; color: #34243a; font-size: 9px; font-weight: 700; }
-.preview-brand-mark { width: 15px; height: 15px; display: grid; place-items: center; border-radius: 4px; background: #611f69; color: white; font: 9px Georgia,serif; }
 .preview-sample-label { color: #8b828e; font-size: 7px; font-weight: 700; letter-spacing: .5px; }
 .preview-layout { min-height: 300px; display: grid; grid-template-columns: 128px minmax(0,1fr); }
 .preview-sidebar { padding: 17px 9px; border-right: 1px solid #ece9ed; background: #fbfafb; }
