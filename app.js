@@ -217,13 +217,14 @@
       ? (state.completed < stages.length ? '<button type="button" class="primary small" id="continue-worksheet">Continue practice</button>' : "")
       : '<button type="button" class="primary small" id="check">Check my work <span>→</span></button>';
     $("worksheet").innerHTML = sheetHead(title, subtitle) + contentFor[state.stage]()
-      + `<div class="feedback" id="feedback" role="status"></div><div class="sheet-actions"><span class="hint">${reviewing ? "Completed worksheet. Your checked answers are saved." : "Enter amounts as numbers. Commas and peso signs are optional."}</span><div class="worksheet-controls">${previous}${primary}</div></div>`;
+      + `<div class="answer-key" aria-label="Answer feedback key"><span class="answer-key-correct">✓ Correct</span><span class="answer-key-incorrect">! Needs correction</span></div><div class="feedback" id="feedback" role="status"></div><div class="sheet-actions"><span class="hint">${reviewing ? "Completed worksheet. Your checked answers are saved." : "Enter amounts as numbers. Commas and peso signs are optional."}</span><div class="worksheet-controls">${previous}${primary}</div></div>`;
 
     const saved = state.responses[state.stage] ?? [];
     worksheetInputs().forEach((input, index) => {
       input.value = saved[index] ?? "";
       input.readOnly = reviewing;
       input.classList.toggle("correct", reviewing && input.value.trim() !== "");
+      if (reviewing) input.title = "Correct answer";
     });
     $("previous-worksheet")?.addEventListener("click", () => goToWorksheet(state.stage - 1));
     $("continue-worksheet")?.addEventListener("click", () => goToWorksheet(state.completed));
@@ -236,7 +237,7 @@
 
   function checkAnswers() {
     const inputs = worksheetInputs();
-    let wrong=0, missing=0;
+    let wrong=0;
     inputs.forEach(input=>{
       const expected=input.dataset.answer.trim();
       const value=input.value.trim();
@@ -249,13 +250,14 @@
       } else ok=norm(value)===norm(expected);
       input.classList.toggle("correct",ok && value!=="");
       input.classList.toggle("incorrect",!ok);
-      if(!value)missing++;
+      input.setAttribute("aria-invalid", String(!ok));
+      input.title = ok ? "Correct answer" : "Needs correction";
       if(!ok)wrong++;
     });
     const feedback=$("feedback");
     if(wrong) {
       feedback.className="feedback";
-      feedback.textContent=`${wrong} answer${wrong===1?'':'s'} need another look${missing?` · ${missing} blank`:''}. Correct entries are outlined in green.`;
+      feedback.textContent=`${wrong} answer${wrong===1?'':'s'} need another look. Green with a solid border means correct; red with a dashed border needs correction.`;
       return;
     }
     state.completed++;
@@ -324,6 +326,8 @@
       if (input.value.trim() || !input.dataset.answer) return;
       input.value = input.dataset.answer;
       input.classList.remove("incorrect", "correct");
+      input.removeAttribute("aria-invalid");
+      input.removeAttribute("title");
       filled++;
     });
     state.responses[state.stage] = inputs.map(input => input.value);

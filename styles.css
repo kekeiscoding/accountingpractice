@@ -315,8 +315,27 @@ input.cell {
 input.cell:hover { border-color: #adb9c4; }
 input.cell:focus { border-color: #588a84; box-shadow: 0 0 0 2px #2d6b661c; }
 input.cell.numeric { text-align: right; font-variant-numeric: tabular-nums; }
-input.cell.correct { border-color: #83b49a; background: #f2f8f4; }
-input.cell.incorrect { border-color: #d28b86; background: #fff6f5; }
+input.cell.correct {
+  border: 2px solid #15703c;
+  background: #cef2d9;
+  color: #104c2a;
+  font-weight: 600;
+}
+input.cell.incorrect {
+  border: 2px dashed #b51d32;
+  background: #ffd5dc;
+  color: #801326;
+  font-weight: 600;
+}
+input.cell.correct:focus, input.cell.incorrect:focus {
+  outline: 2px solid #233b53;
+  outline-offset: 2px;
+  box-shadow: none;
+}
+.answer-key { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 14px; font-size: 11px; }
+.answer-key span { padding: 4px 8px; border-radius: 3px; }
+.answer-key-correct { border: 2px solid #15703c; background: #cef2d9; color: #104c2a; }
+.answer-key-incorrect { border: 2px dashed #b51d32; background: #ffd5dc; color: #801326; }
 .entry-table th:nth-child(1) { width: 13%; }
 .entry-table th:nth-child(2) { width: 37%; }
 .entry-table th:nth-child(3) { width: 9%; }
