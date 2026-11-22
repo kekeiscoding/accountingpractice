@@ -2,15 +2,16 @@
   const accounts = {
     Cash: { no: "101", normal: "debit" },
     "Accounts Receivable": { no: "102", normal: "debit" },
-    "Supplies": { no: "103", normal: "debit" },
-    "Equipment": { no: "150", normal: "debit" },
+    "Office Supplies": { no: "103", normal: "debit" },
+    Equipment: { no: "104", normal: "debit" },
     "Accounts Payable": { no: "201", normal: "credit" },
-    "Owner, Capital": { no: "301", normal: "credit" },
-    "Owner, Drawing": { no: "302", normal: "debit" },
+    "Owner's Capital": { no: "301", normal: "credit" },
+    "Owner's Drawing": { no: "302", normal: "debit" },
     "Service Revenue": { no: "401", normal: "credit" },
-    "Rent Expense": { no: "501", normal: "debit" },
-    "Utilities Expense": { no: "502", normal: "debit" },
-    "Salaries Expense": { no: "503", normal: "debit" }
+    "Salaries Expense": { no: "501", normal: "debit" },
+    "Rent Expense": { no: "502", normal: "debit" },
+    "Utilities Expense": { no: "503", normal: "debit" },
+    "Supplies Expense": { no: "504", normal: "debit" }
   };
   const stages = ["General Journal", "General Ledger", "Trial Balance", "Income Statement", "Changes in Equity", "Balance Sheet"];
   const $ = (id) => document.getElementById(id);
@@ -32,6 +33,7 @@
     const investment = rand(90000, 160000, 5000);
     const equipment = rand(18000, 42000, 1000);
     const supplies = rand(5000, 12000, 500);
+    const usedSupplies = rand(1000, Math.min(4000, supplies - 500), 500);
     const cashService = rand(10000, 24000, 1000);
     const creditService = rand(12000, 30000, 1000);
     const rent = rand(6000, 11000, 500);
@@ -41,16 +43,17 @@
     const drawing = rand(3000, 9000, 500);
     const salaries = rand(4500, 8500, 500);
     const line = (account, side, amount) => ({ account, debit: side === "debit" ? amount : 0, credit: side === "credit" ? amount : 0 });
-    add(1, `The owner invested ${peso(investment)} cash in the business.`, [line("Cash","debit",investment),line("Owner, Capital","credit",investment)]);
+    add(1, `The owner invested ${peso(investment)} cash in the business.`, [line("Cash","debit",investment),line("Owner's Capital","credit",investment)]);
     add(3, `Purchased equipment for ${peso(equipment)} cash.`, [line("Equipment","debit",equipment),line("Cash","credit",equipment)]);
-    add(5, `Purchased supplies on account for ${peso(supplies)}.`, [line("Supplies","debit",supplies),line("Accounts Payable","credit",supplies)]);
+    add(5, `Purchased office supplies on account for ${peso(supplies)}.`, [line("Office Supplies","debit",supplies),line("Accounts Payable","credit",supplies)]);
     add(8, `Provided services for ${peso(cashService)} cash.`, [line("Cash","debit",cashService),line("Service Revenue","credit",cashService)]);
     add(11, `Provided services on account for ${peso(creditService)}.`, [line("Accounts Receivable","debit",creditService),line("Service Revenue","credit",creditService)]);
     add(15, `Paid ${peso(rent)} for the month's rent.`, [line("Rent Expense","debit",rent),line("Cash","credit",rent)]);
     add(18, `Paid ${peso(utilities)} for utilities.`, [line("Utilities Expense","debit",utilities),line("Cash","credit",utilities)]);
+    add(19, `Used ${peso(usedSupplies)} of office supplies.`, [line("Supplies Expense","debit",usedSupplies),line("Office Supplies","credit",usedSupplies)]);
     add(21, `Collected ${peso(collection)} from customers on account.`, [line("Cash","debit",collection),line("Accounts Receivable","credit",collection)]);
     add(24, `Paid ${peso(payable)} to suppliers on account.`, [line("Accounts Payable","debit",payable),line("Cash","credit",payable)]);
-    add(27, `The owner withdrew ${peso(drawing)} cash for personal use.`, [line("Owner, Drawing","debit",drawing),line("Cash","credit",drawing)]);
+    add(27, `The owner withdrew ${peso(drawing)} cash for personal use.`, [line("Owner's Drawing","debit",drawing),line("Cash","credit",drawing)]);
     add(27, `Paid employees ${peso(salaries)} in salaries.`, [line("Salaries Expense","debit",salaries),line("Cash","credit",salaries)]);
 
     const journal = [];
@@ -59,10 +62,10 @@
     journal.forEach(j => balances[j.account] += accounts[j.account].normal === "debit" ? j.debit - j.credit : j.credit - j.debit);
     const totalDebits = journal.reduce((s,j)=>s+j.debit,0);
     const revenue = balances["Service Revenue"];
-    const expenses = ["Rent Expense","Utilities Expense","Salaries Expense"].map(a=>[a,balances[a]]);
+    const expenses = ["Salaries Expense","Rent Expense","Utilities Expense","Supplies Expense"].map(a=>[a,balances[a]]);
     const totalExpenses = expenses.reduce((s,[,v])=>s+v,0);
     const netIncome = revenue - totalExpenses;
-    const endingCapital = balances["Owner, Capital"] + netIncome - balances["Owner, Drawing"];
+    const endingCapital = balances["Owner's Capital"] + netIncome - balances["Owner's Drawing"];
     return { month: monthName, endDay, tx, journal, balances, totalDebits, revenue, expenses, totalExpenses, netIncome, endingCapital };
   }
 
@@ -111,14 +114,14 @@
     return `<p class="sheet-center"><strong>Income Statement</strong>For the month ended ${state.month} ${state.endDay}, 2026</p><div class="form-grid">${statementRows([["Service Revenues",state.revenue],["Less: Expenses","","section"],...state.expenses.map(([a,v])=>[a,v,"sub"]),["Total Expenses",state.totalExpenses,"emphasis"],["Net Income",state.netIncome,"emphasis"]])}</div>`;
   }
   function equityHTML() {
-    const capital=state.balances["Owner, Capital"],drawing=state.balances["Owner, Drawing"];
-    return `<p class="sheet-center"><strong>Statement of Changes in Equity</strong>For the month ended ${state.month} ${state.endDay}, 2026</p><div class="form-grid">${statementRows([["Beginning capital / investment",capital],["Add: Additional investment","0"],["Add: Net income",state.netIncome],["Total",capital+state.netIncome,"emphasis"],["Less: Owner, Drawing",drawing],["Ending capital",state.endingCapital,"emphasis"]])}</div>`;
+    const capital=state.balances["Owner's Capital"],drawing=state.balances["Owner's Drawing"];
+    return `<p class="sheet-center"><strong>Statement of Changes in Equity</strong>For the month ended ${state.month} ${state.endDay}, 2026</p><div class="form-grid">${statementRows([["Beginning capital / investment",capital],["Add: Additional investment","0"],["Add: Net income",state.netIncome],["Total",capital+state.netIncome,"emphasis"],["Less: Owner's Drawing",drawing],["Ending capital",state.endingCapital,"emphasis"]])}</div>`;
   }
   function balanceHTML() {
-    const assets=["Cash","Accounts Receivable","Supplies","Equipment"].filter(a=>state.balances[a]);
+    const assets=["Cash","Accounts Receivable","Office Supplies","Equipment"].filter(a=>state.balances[a]);
     const liabs=["Accounts Payable"].filter(a=>state.balances[a]);
     const totalAssets=assets.reduce((s,a)=>s+state.balances[a],0), totalLiabs=liabs.reduce((s,a)=>s+state.balances[a],0);
-    const items=[["Assets","","section"],...assets.map(a=>[a,state.balances[a],"sub"]),["Total assets",totalAssets,"emphasis"],["Liabilities","","section"],...liabs.map(a=>[a,state.balances[a],"sub"]),["Total liabilities",totalLiabs,"emphasis"],["Equity","","section"],["Owner, Capital",state.endingCapital,"sub"],["Total liabilities and equity",totalLiabs+state.endingCapital,"emphasis"]];
+    const items=[["Assets","","section"],...assets.map(a=>[a,state.balances[a],"sub"]),["Total assets",totalAssets,"emphasis"],["Liabilities","","section"],...liabs.map(a=>[a,state.balances[a],"sub"]),["Total liabilities",totalLiabs,"emphasis"],["Equity","","section"],["Owner's Capital",state.endingCapital,"sub"],["Total liabilities and equity",totalLiabs+state.endingCapital,"emphasis"]];
     return `<p class="sheet-center"><strong>Balance Sheet</strong>As of ${state.month} ${state.endDay}, 2026 · Philippine pesos</p><div class="form-grid">${statementRows(items)}</div>`;
   }
   const contentFor = [journalHTML,ledgerHTML,trialHTML,incomeHTML,equityHTML,balanceHTML];
@@ -182,4 +185,7 @@
     const list=$("transactions");list.classList.toggle("hidden");
     $("toggle-problem").textContent=list.classList.contains("hidden")?"Show transactions":"Hide transactions";
   });
+  $("open-chart").addEventListener("click",()=>$ ("chart-dialog").showModal());
+  $("close-chart").addEventListener("click",()=>$ ("chart-dialog").close());
+  $("chart-dialog").addEventListener("click",event=>{if(event.target===$("chart-dialog"))$("chart-dialog").close();});
 })();
