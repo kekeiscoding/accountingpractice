@@ -409,16 +409,16 @@ input.cell.incorrect { border-color: #d28b86; background: #fff6f5; }
   .home-preview { width: 100%; }
 }
 @media (max-width: 600px) {
-  .topbar { min-height: 56px; padding: 8px 14px; gap: 8px; }
-  .top-tools { gap: 5px; }
-  .top-note { display: none; }
-  .chart-trigger { padding: 7px 8px; font-size: 10px; }
+  .topbar { min-height: 56px; flex-wrap: wrap; padding: 8px 14px; gap: 7px; }
+  .top-tools { width: 100%; justify-content: flex-end; gap: 7px; }
+  .chart-trigger { min-height: 34px; flex: 1 1 0; padding: 7px 8px; font-size: 11px; }
   .shell { width: calc(100% - 28px); }
   .welcome { margin: 18px 0 25px; padding: 30px 24px; }
   .welcome { gap: 24px; }
   .welcome h1 { font-size: 34px; letter-spacing: -.8px; }
   .welcome-copy > p { font-size: 14px; }
   .welcome-actions { align-items: flex-start; flex-direction: column; gap: 10px; }
+  .home-proof { flex-wrap: wrap; row-gap: 6px; }
   .worksheet { padding: 18px 13px; }
   .sheet-head { gap: 8px; }
   .sheet-meta { display: none; }
@@ -430,10 +430,9 @@ input.cell.incorrect { border-color: #d28b86; background: #fff6f5; }
   .example-content { max-height: 68vh; }
   .example-form { grid-template-columns: minmax(140px, 1fr) 110px; }
   .home-preview { padding: 8px; }
-  .preview-layout { grid-template-columns: 96px minmax(0,1fr); }
-  .preview-sidebar { padding: 13px 5px; }
-  .preview-sidebar li { gap: 4px; padding: 4px 3px; font-size: 7px; }
-  .preview-sheet { padding: 15px 10px 10px; }
+  .preview-layout { min-height: 0; grid-template-columns: minmax(0,1fr); }
+  .preview-sidebar { display: none; }
+  .preview-sheet { padding: 15px 12px 10px; }
   .preview-windowbar { padding: 0 8px; }
   .preview-sample-label { font-size: 6px; }
 }
