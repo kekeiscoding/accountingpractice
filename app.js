@@ -101,7 +101,13 @@
       });
       rows.push(`<tr class="gap-row"><td colspan="6"></td></tr>`);
     });
-    return table(["Date","Items / explanation","Ref.","Debit (₱)","Credit (₱)","Balance"],rows);
+    const exampleRows = [
+      `<tr><td>Mar 1</td><td>Journal 1</td><td>1</td><td>50,000</td><td></td><td>50,000 Dr</td></tr>`,
+      `<tr><td>Mar 3</td><td>Journal 2</td><td>2</td><td></td><td>4,000</td><td>46,000 Dr</td></tr>`,
+      `<tr><td>Mar 8</td><td>Journal 3</td><td>3</td><td>12,000</td><td></td><td>58,000 Dr</td></tr>`
+    ];
+    const example = `<details class="example-card"><summary>See a finished ledger example</summary><p>This illustration shows how Cash (Account No. 101) is posted and how its running debit balance changes.</p><div class="table-wrap"><table><thead><tr><th colspan="4">Account: Cash</th><th colspan="2">Account No. 101</th></tr><tr><th>Date</th><th>Items</th><th>Ref.</th><th>Debit (₱)</th><th>Credit (₱)</th><th>Balance</th></tr></thead><tbody>${exampleRows.join("")}</tbody></table></div></details>`;
+    return example + table(["Date","Items / explanation","Ref.","Debit (₱)","Credit (₱)","Balance"],rows);
   }
   function trialHTML() {
     const rows=[]; let d=0,c=0;
@@ -185,7 +191,7 @@
     const list=$("transactions");list.classList.toggle("hidden");
     $("toggle-problem").textContent=list.classList.contains("hidden")?"Show transactions":"Hide transactions";
   });
-  $("open-chart").addEventListener("click",()=>$ ("chart-dialog").showModal());
-  $("close-chart").addEventListener("click",()=>$ ("chart-dialog").close());
+  $("open-chart").addEventListener("click",()=>$("chart-dialog").showModal());
+  $("close-chart").addEventListener("click",()=>$("chart-dialog").close());
   $("chart-dialog").addEventListener("click",event=>{if(event.target===$("chart-dialog"))$("chart-dialog").close();});
 })();
