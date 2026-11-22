@@ -247,7 +247,16 @@
   $("open-chart").addEventListener("click",()=>$("chart-dialog").showModal());
   $("close-chart").addEventListener("click",()=>$("chart-dialog").close());
   $("chart-dialog").addEventListener("click",event=>{if(event.target===$("chart-dialog"))$("chart-dialog").close();});
-  $("open-examples").addEventListener("click",()=>{$("examples-dialog").showModal();renderWorkedExample(0);});
-  $("close-examples").addEventListener("click",()=>$("examples-dialog").close());
-  $("examples-dialog").addEventListener("click",event=>{if(event.target===$("examples-dialog"))$("examples-dialog").close();});
+  const examplesDialog=$("examples-dialog");
+  const closeExamples=()=>{
+    if(typeof examplesDialog.close==="function") examplesDialog.close();
+    else examplesDialog.removeAttribute("open");
+  };
+  $("open-examples").addEventListener("click",()=>{
+    renderWorkedExample(0);
+    if(typeof examplesDialog.showModal==="function") examplesDialog.showModal();
+    else examplesDialog.setAttribute("open","");
+  });
+  $("close-examples").addEventListener("click",closeExamples);
+  examplesDialog.addEventListener("click",event=>{if(event.target===examplesDialog)closeExamples();});
 })();
