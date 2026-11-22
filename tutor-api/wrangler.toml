@@ -1,0 +1,19 @@
+name = "ako-tutor"
+main = "worker.mjs"
+compatibility_date = "2026-11-22"
+workers_dev = true
+preview_urls = false
+
+[vars]
+SITE_ORIGIN = "https://kekeiscoding.github.io"
+
+[ai]
+binding = "AI"
+
+[[ratelimits]]
+name = "TUTOR_LIMIT"
+namespace_id = "14101"
+
+[ratelimits.simple]
+limit = 6
+period = 60

@@ -238,7 +238,10 @@
     "Start with the owner’s capital and include net income or subtract a net loss. Subtract the owner’s drawings to find ending equity.",
     "Group ending balances into assets and liabilities. Bring in ending equity from the Statement of Changes in Equity, then check that assets equal liabilities plus equity."
   ];
-  const tutorReady = "On-device AI when available. Guided hints work in any browser.";
+  const tutorEndpoint = document.querySelector('meta[name="ako-tutor-api"]')?.content.trim();
+  const tutorReady = tutorEndpoint
+    ? "Ask for an AI hint. Your question and practice scenario are sent to the tutor service."
+    : "AI chat is awaiting setup. Guided hints are available.";
   const tutorWelcome = "Ask about an account, a transaction, or the worksheet you’re on. I’ll help you work out your next step.";
   let tutorRequest;
   let tutorHistory = [];
@@ -282,49 +285,50 @@
     const transactions = state.tx;
     const mode = $("tutor-mode");
     const send = $("tutor-send");
-    const model = globalThis.LanguageModel;
-    const timeout = setTimeout(() => request.abort(), 45000);
-    let session;
+    const timeout = setTimeout(() => request.abort(), 30000);
     let reply = guidedReply(question, stage);
     let speaker = "Guided hint";
+    let status = tutorReady;
     addTutorMessage("You", question);
     input.value = "";
     send.disabled = true;
     try {
-      if (model && await model.availability() !== "unavailable" && !request.signal.aborted) {
-        mode.textContent = "Preparing on-device AI…";
-        session = await model.create({
-          signal: request.signal,
-          initialPrompts: [{
-            role: "system",
-            content: "You tutor introductory accounting for AKO. Give short, plain English hints and explain the next step. Stay on accounting. Do not provide completed worksheet entries, exact answers for the active exercise, or fill in a worksheet. If the question is ambiguous, ask which row or transaction the student means."
-          }]
-        });
+      if (tutorEndpoint) {
         mode.textContent = "AKO is working on a hint…";
         const context = {
           worksheet: stages[stage],
-          worksheetHint: worksheetHints[stage],
-          referenceFormat: "Journal PR uses the account number. Ledger Ref. uses GJ1, the source page.",
-          chartOfAccounts: accounts,
+          chart: Object.entries(accounts).map(([title, { no, normal }]) => `${no} ${title} (${normal})`).join("\n"),
           transactions: transactions.map(({ date, text }) => `${displayDate(date)}: ${text}`),
-          recentConversation: tutorHistory.slice(-4),
+          recentConversation: tutorHistory,
           question
         };
-        const answer = await session.prompt(JSON.stringify(context), { signal: request.signal });
-        if (answer.trim()) {
+        const response = await fetch(tutorEndpoint, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(context),
+          signal: request.signal,
+          credentials: "omit"
+        });
+        if (response.status === 429) {
+          status = "Too many requests. Try again in a minute. Here’s a guided hint.";
+        } else {
+          if (!response.ok) throw new Error("Tutor request failed");
+          const { reply: answer } = await response.json();
+          if (typeof answer !== "string" || !answer.trim()) throw new Error("Empty tutor response");
           reply = answer.trim();
           speaker = "AKO AI";
         }
       }
     } catch {
-      // The guided reply is available if the browser model cannot respond.
+      status = "AI chat is temporarily unavailable. Here’s a guided hint.";
     } finally {
       clearTimeout(timeout);
-      session?.destroy();
       if (tutorRequest === request) {
         addTutorMessage(speaker, reply);
-        tutorHistory = [...tutorHistory.slice(-2), { question, reply }];
-        mode.textContent = speaker === "AKO AI" ? "On-device AI active" : "Guided hints mode";
+        if (speaker === "AKO AI") {
+          tutorHistory = [...tutorHistory.slice(-1), { question, reply: reply.slice(0, 1200) }];
+        }
+        mode.textContent = status;
         send.disabled = false;
         tutorRequest = undefined;
       }
