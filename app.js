@@ -95,16 +95,16 @@
       movements.forEach(j=>{
         bal += accounts[account].normal === "debit" ? j.debit-j.credit : j.credit-j.debit;
         const side=accounts[account].normal;
-        rows.push(`<tr><td>${field(j.date)}</td><td>${field(`Journal ${j.transaction}`)}</td><td>${field(j.pr)}</td><td>${field(amount(j.debit),"number")}</td><td>${field(amount(j.credit),"number")}</td><td>${field(`${amount(bal)} ${bal<0?(side==='debit'?'Cr':'Dr'):side==='debit'?'Dr':'Cr'}`)}</td></tr>`);
+        rows.push(`<tr><td>${field(j.date)}</td><td>${field(j.account)}</td><td>${field("GJ1")}</td><td>${field(amount(j.debit),"number")}</td><td>${field(amount(j.credit),"number")}</td><td>${field(`${amount(bal)} ${bal<0?(side==='debit'?'Cr':'Dr'):side==='debit'?'Dr':'Cr'}`)}</td></tr>`);
       });
       rows.push(`<tr class="gap-row"><td colspan="6"></td></tr>`);
     });
     const exampleRows = [
-      `<tr><td>Mar 1</td><td>Journal 1</td><td>1</td><td>50,000</td><td></td><td>50,000 Dr</td></tr>`,
-      `<tr><td>Mar 3</td><td>Journal 2</td><td>2</td><td></td><td>4,000</td><td>46,000 Dr</td></tr>`,
-      `<tr><td>Mar 8</td><td>Journal 3</td><td>3</td><td>12,000</td><td></td><td>58,000 Dr</td></tr>`
+      `<tr><td>Mar 1</td><td>Owner's Capital</td><td>GJ1</td><td>50,000</td><td></td><td>50,000 Dr</td></tr>`,
+      `<tr><td>Mar 3</td><td>Equipment</td><td>GJ1</td><td></td><td>4,000</td><td>46,000 Dr</td></tr>`,
+      `<tr><td>Mar 8</td><td>Service Revenue</td><td>GJ1</td><td>12,000</td><td></td><td>58,000 Dr</td></tr>`
     ];
-    const example = `<details class="example-card"><summary>See a finished ledger example</summary><p>This illustration shows how Cash (Account No. 101) is posted and how its running debit balance changes.</p><div class="table-wrap"><table><thead><tr><th colspan="4">Account: Cash</th><th colspan="2">Account No. 101</th></tr><tr><th>Date</th><th>Items</th><th>Ref.</th><th>Debit (₱)</th><th>Credit (₱)</th><th>Balance</th></tr></thead><tbody>${exampleRows.join("")}</tbody></table></div></details>`;
+    const example = `<details class="example-card"><summary>See a finished ledger example</summary><p>This illustration shows how Cash (Account No. 101) is posted and how its running debit balance changes. GJ1 means General Journal, page 1.</p><div class="table-wrap"><table><thead><tr><th colspan="4">Account: Cash</th><th colspan="2">Account No. 101</th></tr><tr><th>Date</th><th>Items</th><th>Ref.</th><th>Debit (₱)</th><th>Credit (₱)</th><th>Balance</th></tr></thead><tbody>${exampleRows.join("")}</tbody></table></div></details>`;
     return example + table(["Date","Items / explanation","Ref.","Debit (₱)","Credit (₱)","Balance"],rows);
   }
   function trialHTML() {
@@ -133,7 +133,7 @@
   function render() {
     renderSteps();
     const title=stages[state.stage];
-    const subtitle=["Record each transaction with its account titles, posting reference, debit, credit, and a brief explanation.","Post each journal entry to the correct ledger account and calculate the running balance.","List every account with its ending balance on the correct side.","Use the adjusted balances to calculate the month’s result.","Carry net income and drawings into the owner’s ending equity.","Classify all assets, liabilities, and ending equity."][state.stage];
+    const subtitle=["Record each transaction with its account titles, posting reference, debit, credit, and a brief explanation.","Post entries to each ledger account. Use GJ1 in Ref. for the source journal page, then calculate the running balance.","List every account with its ending balance on the correct side.","Use the adjusted balances to calculate the month’s result.","Carry net income and drawings into the owner’s ending equity.","Classify all assets, liabilities, and ending equity."][state.stage];
     $("worksheet").innerHTML=sheetHead(title,subtitle)+contentFor[state.stage]()+`<div class="feedback" id="feedback"></div><div class="sheet-actions"><span class="hint">Enter amounts as numbers. Commas and peso signs are optional.</span><button class="primary small" id="check">Check my work <span>→</span></button></div>`;
     $("check").addEventListener("click",checkAnswers);
   }
