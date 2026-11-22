@@ -181,12 +181,14 @@ button { cursor: pointer; }
 .workspace {
   min-height: calc(100vh - 110px);
   display: grid;
-  grid-template-columns: 222px minmax(0, 1fr);
-  gap: 24px;
+  grid-template-columns: 180px minmax(0, 1fr) 218px;
+  grid-template-areas: "steps worksheet chart";
+  gap: 16px;
   padding: 28px 0 38px;
 }
 .hidden { display: none !important; }
 .rail {
+  grid-area: steps;
   position: sticky;
   top: 18px;
   align-self: start;
@@ -361,6 +363,37 @@ input.cell.incorrect { border-color: #d28b86; background: #fff6f5; }
 .chart-table th:first-child, .chart-table td:first-child { width: 38%; text-align: center; }
 .chart-table td { height: auto; padding: 8px 12px; font-size: 11px; }
 .chart-table tbody tr:nth-child(even) { background: #fafbfc; }
+.workspace > .content { grid-area: worksheet; min-width: 0; }
+.practice-chart {
+  grid-area: chart;
+  position: sticky;
+  top: 18px;
+  align-self: start;
+  z-index: 2;
+  border: 1px solid var(--line-strong);
+  border-radius: 8px;
+  background: var(--paper);
+  box-shadow: 0 4px 12px #1c304414;
+}
+.practice-chart summary {
+  padding: 10px 12px;
+  color: var(--navy);
+  font-size: 13px;
+  font-weight: 700;
+  cursor: pointer;
+}
+.practice-chart-body {
+  max-height: calc(100dvh - 85px);
+  overflow: auto;
+  overscroll-behavior: contain;
+  border-top: 1px solid var(--line);
+}
+.practice-chart .chart-table { border: 0; }
+.practice-chart .chart-table th,
+.practice-chart .chart-table td { padding: 6px 8px; }
+.practice-chart .chart-table th:first-child,
+.practice-chart .chart-table td:first-child { width: 32%; }
+.practice-chart .chart-table th { position: sticky; top: 0; }
 .examples-dialog { width: min(960px, calc(100vw - 30px)); }
 .example-tabs { display: flex; gap: 4px; overflow-x: auto; padding-bottom: 8px; border-bottom: 1px solid var(--line); }
 .example-tab { padding: 8px 10px; border: 0; border-radius: 5px; background: transparent; color: var(--muted); white-space: nowrap; font: 600 11px "Segoe UI", Arial, sans-serif; }
@@ -386,14 +419,26 @@ input.cell.incorrect { border-color: #d28b86; background: #fff6f5; }
 .example-card summary::after { float: right; content: "+"; color: var(--muted); }
 .example-card[open] summary::after { content: "−"; }
 .example-card > p { margin: 0; padding: 0 12px 10px; color: var(--muted); font-size: 10px; }
-@media (max-width: 900px) {
+@media (max-width: 1050px) {
   .shell { width: min(100% - 36px, 1180px); }
-  .workspace { grid-template-columns: 1fr; gap: 14px; }
+  .workspace {
+    grid-template-columns: minmax(0, 1fr);
+    grid-template-areas: "steps" "chart" "worksheet";
+    gap: 14px;
+  }
+  .practice-chart { top: 0; }
+  .practice-chart-body { max-height: min(24dvh, 180px); }
+  .practice-chart ~ .content .worksheet,
+  .practice-chart ~ .content input { scroll-margin-top: 54px; }
+  .practice-chart[open] ~ .content .worksheet,
+  .practice-chart[open] ~ .content input { scroll-margin-top: calc(54px + min(24dvh, 180px)); }
   .rail { position: static; min-height: 0; padding: 12px; }
   .rail-label { margin: 0 0 9px 5px; }
   .steps { display: flex; gap: 5px; overflow-x: auto; padding-bottom: 2px; }
   .step { width: auto; min-height: 34px; flex: 0 0 auto; padding: 6px 8px; }
   .step span:last-child { display: none; }
+}
+@media (max-width: 900px) {
   .rail-foot { display: none; }
   .transaction-list { grid-template-columns: 1fr; }
   .entry-table { min-width: 720px; }

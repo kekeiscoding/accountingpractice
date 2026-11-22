@@ -6,7 +6,7 @@
   <meta name="theme-color" content="#f2f4f6" />
   <title>AKO | Accounting Knowledge Overview</title>
   <link rel="icon" href="ako-mark.svg" type="image/svg+xml" />
-  <link rel="stylesheet" href="styles.css?v=ako" />
+  <link rel="stylesheet" href="styles.css?v=floating-chart" />
 </head>
 <body>
   <header class="topbar">
@@ -21,7 +21,7 @@
   </header>
   <dialog class="chart-dialog" id="chart-dialog" aria-labelledby="chart-title">
     <div class="chart-dialog-head"><div><div class="eyebrow">REFERENCE</div><h2 id="chart-title">Chart of Accounts</h2></div><button class="close-chart" id="close-chart" aria-label="Close chart">×</button></div>
-    <table class="chart-table"><thead><tr><th>Account No.</th><th>Account Title</th></tr></thead><tbody>
+    <table class="chart-table" id="chart-table"><thead><tr><th scope="col">Account No.</th><th scope="col">Account Title</th></tr></thead><tbody>
       <tr><td>101</td><td>Cash</td></tr><tr><td>102</td><td>Accounts Receivable</td></tr><tr><td>103</td><td>Office Supplies</td></tr><tr><td>104</td><td>Equipment</td></tr><tr><td>201</td><td>Accounts Payable</td></tr><tr><td>301</td><td>Owner's Capital</td></tr><tr><td>302</td><td>Owner's Drawing</td></tr><tr><td>401</td><td>Service Revenue</td></tr><tr><td>501</td><td>Salaries Expense</td></tr><tr><td>502</td><td>Rent Expense</td></tr><tr><td>503</td><td>Utilities Expense</td></tr><tr><td>504</td><td>Supplies Expense</td></tr>
     </tbody></table>
   </dialog>
@@ -61,6 +61,10 @@
         <div class="steps" id="steps"></div>
         <div class="rail-foot"><div class="progress-line"><span id="progress-fill"></span></div><div class="progress-caption"><span id="progress-text">0 of 6 complete</span><button id="new-set" class="text-button">New set</button></div></div>
       </aside>
+      <details class="practice-chart" id="practice-chart" open>
+        <summary id="practice-chart-title">Chart of Accounts</summary>
+        <div class="practice-chart-body" id="practice-chart-body" role="region" aria-labelledby="practice-chart-title" tabindex="0"></div>
+      </details>
       <div class="content">
         <div class="problem-card" id="problem-card">
           <div class="problem-heading"><div><div class="eyebrow">BUSINESS TRANSACTIONS</div><h2 id="problem-title">A new practice set</h2></div><button class="quiet-button" id="toggle-problem">Hide transactions</button></div>
@@ -71,6 +75,6 @@
     </section>
     <footer class="site-foot"><span>AKO · ICT 141</span><span>Amounts in Philippine pesos (₱)</span></footer>
   </main>
-  <script src="app.js?v=worked-examples-2"></script>
+  <script src="app.js?v=floating-chart"></script>
 </body>
 </html>

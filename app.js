@@ -232,6 +232,8 @@
 
   function start() {
     state=makeSet(); state.stage=0;
+    $("practice-chart-body").append($("chart-table"));
+    $("practice-chart").open=true;
     $("welcome").classList.add("hidden"); $("workspace").classList.remove("hidden");
     $("problem-title").textContent=`Monthly transactions · ${state.month} 2026`;
     $("transactions").innerHTML=state.tx.map((t,i)=>`<div class="transaction"><time>${displayDate(t.date)}</time><span>${t.text}</span></div>`).join("");
@@ -244,7 +246,14 @@
     const list=$("transactions");list.classList.toggle("hidden");
     $("toggle-problem").textContent=list.classList.contains("hidden")?"Show transactions":"Hide transactions";
   });
-  $("open-chart").addEventListener("click",()=>$("chart-dialog").showModal());
+  $("open-chart").addEventListener("click",()=>{
+    if ($("workspace").classList.contains("hidden")) {
+      $("chart-dialog").showModal();
+    } else {
+      $("practice-chart").open=true;
+      $("practice-chart-title").focus();
+    }
+  });
   $("close-chart").addEventListener("click",()=>$("chart-dialog").close());
   $("chart-dialog").addEventListener("click",event=>{if(event.target===$("chart-dialog"))$("chart-dialog").close();});
   const examplesDialog=$("examples-dialog");
