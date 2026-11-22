@@ -68,10 +68,18 @@
   }
 
   function renderSteps() {
-    $("steps").innerHTML = stages.map((s,i) => `<button class="step ${i===state.stage?'active':i<state.stage?'done':'locked'}" ${i<state.stage?`data-go="${i}"`:''}><span class="step-number">${i<state.stage?'✓':i+1}</span><span>${s}</span></button>`).join("");
-    $("steps").querySelectorAll("[data-go]").forEach(b=>b.addEventListener("click",()=>{state.stage=Number(b.dataset.go);render();}));
-    $("progress-fill").style.width = `${state.stage / stages.length * 100}%`;
-    $("progress-text").textContent = `${state.stage} of ${stages.length} complete`;
+    $("steps").innerHTML = stages.map((title, index) => {
+      const complete = index < state.completed;
+      const current = index === state.stage;
+      const locked = index > state.completed;
+      const status = current ? "active" : complete ? "done" : locked ? "locked" : "available";
+      return `<button type="button" class="step ${status}" data-go="${index}" aria-label="${title}${complete ? ", complete" : ""}" ${current ? 'aria-current="step"' : ""} ${locked ? "disabled" : ""}><span class="step-number">${complete ? "✓" : index + 1}</span><span>${title}</span></button>`;
+    }).join("");
+    $("steps").querySelectorAll("[data-go]").forEach(button => {
+      button.addEventListener("click", () => goToWorksheet(Number(button.dataset.go)));
+    });
+    $("progress-fill").style.width = `${state.completed / stages.length * 100}%`;
+    $("progress-text").textContent = `${state.completed} of ${stages.length} complete`;
   }
 
   const field = (expected, kind="text", extra="") => `<input class="cell ${kind==='number'?'numeric':''}" data-answer="${String(expected ?? "").replaceAll('"','&quot;')}" data-kind="${kind}" ${extra} autocomplete="off" aria-label="Answer">`;
@@ -185,16 +193,48 @@
     $("example-tabs").querySelectorAll("[data-example]").forEach(button=>button.addEventListener("click",()=>renderWorkedExample(Number(button.dataset.example))));
   }
 
+  function worksheetInputs() {
+    return [...$("worksheet").querySelectorAll("input[data-answer]")];
+  }
+
+  function goToWorksheet(stage) {
+    if (stage < 0 || stage >= stages.length || stage > state.completed || stage === state.stage) return;
+    state.responses[state.stage] = worksheetInputs().map(input => input.value);
+    state.stage = stage;
+    render();
+    $("worksheet").focus({ preventScroll: true });
+    $("worksheet").scrollIntoView({ behavior: "smooth", block: "start" });
+  }
+
   function render() {
     renderSteps();
     const title=stages[state.stage];
     const subtitle=["Record each transaction’s date, account titles, posting references, debits, and credits.","Post entries to each ledger account. Use GJ1 in Ref. for the source journal page, then calculate the running balance.","List every account with its ending balance on the correct side.","Use the adjusted balances to calculate the month’s result.","Carry net income and drawings into the owner’s ending equity.","Classify all assets, liabilities, and ending equity."][state.stage];
-    $("worksheet").innerHTML=sheetHead(title,subtitle)+contentFor[state.stage]()+`<div class="feedback" id="feedback"></div><div class="sheet-actions"><span class="hint">Enter amounts as numbers. Commas and peso signs are optional.</span><button class="primary small" id="check">Check my work <span>→</span></button></div>`;
-    $("check").addEventListener("click",checkAnswers);
+    const reviewing = state.stage < state.completed;
+    const previous = state.stage > 0 ? '<button type="button" class="quiet-button" id="previous-worksheet">Previous worksheet</button>' : "";
+    const primary = reviewing
+      ? (state.completed < stages.length ? '<button type="button" class="primary small" id="continue-worksheet">Continue practice</button>' : "")
+      : '<button type="button" class="primary small" id="check">Check my work <span>→</span></button>';
+    $("worksheet").innerHTML = sheetHead(title, subtitle) + contentFor[state.stage]()
+      + `<div class="feedback" id="feedback" role="status"></div><div class="sheet-actions"><span class="hint">${reviewing ? "Completed worksheet. Your checked answers are saved." : "Enter amounts as numbers. Commas and peso signs are optional."}</span><div class="worksheet-controls">${previous}${primary}</div></div>`;
+
+    const saved = state.responses[state.stage] ?? [];
+    worksheetInputs().forEach((input, index) => {
+      input.value = saved[index] ?? "";
+      input.readOnly = reviewing;
+      input.classList.toggle("correct", reviewing && input.value.trim() !== "");
+    });
+    $("previous-worksheet")?.addEventListener("click", () => goToWorksheet(state.stage - 1));
+    $("continue-worksheet")?.addEventListener("click", () => goToWorksheet(state.completed));
+    $("check")?.addEventListener("click", checkAnswers);
+    if (state.completed === stages.length) {
+      $("feedback").className = "feedback good";
+      $("feedback").textContent = "You completed the full accounting cycle.";
+    }
   }
 
   function checkAnswers() {
-    const inputs=[...$("worksheet").querySelectorAll("input[data-answer]")];
+    const inputs = worksheetInputs();
     let wrong=0, missing=0;
     inputs.forEach(input=>{
       const expected=input.dataset.answer.trim();
@@ -217,16 +257,15 @@
       feedback.textContent=`${wrong} answer${wrong===1?'':'s'} need another look${missing?` · ${missing} blank`:''}. Correct entries are outlined in green.`;
       return;
     }
-    feedback.className="feedback good";
-    if(state.stage<stages.length-1) {
-      feedback.textContent="Excellent — this worksheet is complete. The next section is unlocked.";
-      state.stage++;
-      renderSteps();
-      setTimeout(()=>{render();document.querySelector(".worksheet").scrollIntoView({behavior:"smooth",block:"start"});},650);
+    state.completed++;
+    if (state.completed < stages.length) {
+      goToWorksheet(state.completed);
+      $("feedback").className = "feedback good";
+      $("feedback").textContent = "Previous worksheet completed and saved.";
     } else {
-      feedback.textContent="Perfect score. You completed the full accounting cycle! Generate another set to keep practicing.";
-      $("check").textContent="Completed ✓";
-      $("check").disabled=true;
+      state.responses[state.stage] = inputs.map(input => input.value);
+      render();
+      $("worksheet").focus({ preventScroll: true });
     }
   }
 
@@ -240,9 +279,9 @@
   ];
   const tutorEndpoint = document.querySelector('meta[name="ako-tutor-api"]')?.content.trim();
   const tutorReady = tutorEndpoint
-    ? "Ask for an AI hint. Your question and practice scenario are sent to the tutor service."
+    ? "Your question and practice scenario are sent to the tutor service."
     : "AI chat is awaiting setup. Guided hints are available.";
-  const tutorWelcome = "Ask about an account, a transaction, or the worksheet you’re on. I’ll help you work out your next step.";
+  const tutorWelcome = "Ask for a hint or a direct answer. For example, “Show me the journal entry for transaction 1.”";
   let tutorRequest;
   let tutorHistory = [];
 
@@ -282,7 +321,6 @@
     const request = new AbortController();
     tutorRequest = request;
     const stage = state.stage;
-    const transactions = state.tx;
     const mode = $("tutor-mode");
     const send = $("tutor-send");
     const timeout = setTimeout(() => request.abort(), 30000);
@@ -294,11 +332,19 @@
     send.disabled = true;
     try {
       if (tutorEndpoint) {
-        mode.textContent = "AKO is working on a hint…";
+        mode.textContent = "AKO is working on a reply…";
         const context = {
           worksheet: stages[stage],
           chart: Object.entries(accounts).map(([title, { no, normal }]) => `${no} ${title} (${normal})`).join("\n"),
-          transactions: transactions.map(({ date, text }) => `${displayDate(date)}: ${text}`),
+          transactions: state.tx.map(({ date, text }, i) => `${i + 1}. ${displayDate(date)}: ${text}`),
+          generatedAnswers: {
+            journal: state.journal,
+            journalTotalForEachSide: state.totalDebits,
+            endingLedgerBalancesOnNormalSides: state.balances,
+            totalExpenses: state.totalExpenses,
+            netIncome: state.netIncome,
+            endingCapital: state.endingCapital
+          },
           recentConversation: tutorHistory,
           question
         };
@@ -344,7 +390,8 @@
     $("tutor-mode").textContent = tutorReady;
     $("tutor-log").replaceChildren();
     addTutorMessage("AKO", tutorWelcome);
-    state=makeSet(); state.stage=0;
+    state = { ...makeSet(), stage: 0, completed: 0, responses: [] };
+    $("transactions").classList.remove("hidden");
     $("practice-chart-body").append($("chart-table"));
     $("practice-chart").open=true;
     $("welcome").classList.add("hidden"); $("workspace").classList.remove("hidden");

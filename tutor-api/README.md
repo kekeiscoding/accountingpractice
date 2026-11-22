@@ -1,6 +1,6 @@
 # Ask AKO API
 
-The static website sends the question, current worksheet, generated transactions, Chart of Accounts, and up to two earlier AI exchanges to a Cloudflare Worker. The Worker calls the [Workers AI API](https://developers.cloudflare.com/workers-ai/configuration/bindings/) with a server binding. The browser needs no API key. Exercise answers and inputs are never read by the chat integration.
+The static website sends the question, current worksheet, generated transactions and answer data, Chart of Accounts, and up to two earlier AI exchanges to a Cloudflare Worker. The tutor uses the generated answer data for direct answers when the student asks for one. It does not read answers typed into the worksheet. The Worker calls the [Workers AI API](https://developers.cloudflare.com/workers-ai/configuration/bindings/) with a server binding. The browser needs no API key.
 
 ## Deploy
 

@@ -222,6 +222,7 @@ button { cursor: pointer; }
   font-weight: 700;
 }
 .step.done { color: var(--green); cursor: pointer; }
+.step.available { color: var(--navy); cursor: pointer; }
 .step.locked { color: #8d969f; }
 .step-number {
   width: 21px;
@@ -335,7 +336,8 @@ input.cell.incorrect { border-color: #d28b86; background: #fff6f5; }
 .sheet-center strong { display: block; margin-bottom: 5px; color: var(--navy); font-size: 15px; }
 .feedback { min-height: 20px; margin-top: 13px; color: var(--red); font-size: 11px; }
 .feedback.good { color: var(--green); }
-.sheet-actions { display: flex; justify-content: space-between; align-items: center; gap: 15px; margin-top: 14px; }
+.sheet-actions { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 15px; margin-top: 14px; }
+.worksheet-controls { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; }
 .hint { color: var(--muted); font-size: 10px; }
 .primary.small { min-height: 36px; padding: 8px 12px; font-size: 11px; }
 .primary.small span { margin-left: 7px; }
