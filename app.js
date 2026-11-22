@@ -33,7 +33,6 @@
     const investment = rand(90000, 160000, 5000);
     const equipment = rand(18000, 42000, 1000);
     const supplies = rand(5000, 12000, 500);
-    const usedSupplies = rand(1000, Math.min(4000, supplies - 500), 500);
     const cashService = rand(10000, 24000, 1000);
     const creditService = rand(12000, 30000, 1000);
     const rent = rand(6000, 11000, 500);
@@ -50,7 +49,6 @@
     add(11, `Provided services on account for ${peso(creditService)}.`, [line("Accounts Receivable","debit",creditService),line("Service Revenue","credit",creditService)]);
     add(15, `Paid ${peso(rent)} for the month's rent.`, [line("Rent Expense","debit",rent),line("Cash","credit",rent)]);
     add(18, `Paid ${peso(utilities)} for utilities.`, [line("Utilities Expense","debit",utilities),line("Cash","credit",utilities)]);
-    add(19, `Used ${peso(usedSupplies)} of office supplies.`, [line("Supplies Expense","debit",usedSupplies),line("Office Supplies","credit",usedSupplies)]);
     add(21, `Collected ${peso(collection)} from customers on account.`, [line("Cash","debit",collection),line("Accounts Receivable","credit",collection)]);
     add(24, `Paid ${peso(payable)} to suppliers on account.`, [line("Accounts Payable","debit",payable),line("Cash","credit",payable)]);
     add(27, `The owner withdrew ${peso(drawing)} cash for personal use.`, [line("Owner's Drawing","debit",drawing),line("Cash","credit",drawing)]);
