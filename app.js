@@ -78,6 +78,60 @@
   const sheetHead = (title, subtitle="") => `<div class="sheet-head"><div><div class="eyebrow">ICT 141 · PRACTICE EXAM</div><h2>${title}</h2>${subtitle?`<p>${subtitle}</p>`:""}</div><div class="sheet-meta"><span>${state.month} · ₱</span><span>Worksheet ${state.stage+1}/6</span></div></div>`;
   const table = (heads, rows, cls="") => `<div class="table-wrap"><table class="${cls}"><thead><tr>${heads.map(h=>`<th>${h}</th>`).join("")}</tr></thead><tbody>${rows.join("")}</tbody></table></div>`;
   const amount = n => n ? money(n) : "";
+  const staticTable = (heads, rows, cls="example-table") => table(heads, rows.map(row=>`<tr>${row.map(cell=>`<td>${cell}</td>`).join("")}</tr>`), cls);
+
+  function ledgerExample(account, no, rows) {
+    return `<section class="ledger-example-account"><div class="ledger-example-title"><strong>Account: ${account}</strong><span>Account No. ${no}</span></div>${staticTable(["Date","Items","Ref.","Debit (₱)","Credit (₱)","Balance"],rows)}</section>`;
+  }
+  const workedExamples = [
+    {
+      title: "General Journal",
+      intro: "Record each transaction with the debit account first, the credit account indented, the account number in PR, and an explanation.",
+      body: staticTable(["Date","Account Title and Explanation","PR","Debit (₱)","Credit (₱)"],[
+        ["Mar 1","Cash","101","50,000",""],["","Owner's Capital","301","","50,000"],["","To record owner's investment.","","",""],
+        ["Mar 3","Equipment","104","10,000",""],["","Cash","101","","10,000"],["","To record equipment purchased for cash.","","",""],
+        ["Mar 5","Office Supplies","103","2,000",""],["","Accounts Payable","201","","2,000"],["","To record supplies purchased on account.","","",""],
+        ["Mar 10","Cash","101","8,000",""],["","Service Revenue","401","","8,000"],["","To record services provided for cash.","","",""],
+        ["Mar 15","Rent Expense","502","3,000",""],["","Cash","101","","3,000"],["","To record rent paid.","","",""],
+        ["","Totals","","73,000","73,000"]
+      ])
+    },
+    {
+      title: "General Ledger",
+      intro: "Post each journal line to its account. PR in the journal uses the account number; Ref. here points back to the source journal page (GJ1). Balances below are running balances.",
+      body: [
+        ledgerExample("Cash","101",[["Mar 1","Owner's Capital","GJ1","50,000","","50,000 Dr"],["Mar 3","Equipment","GJ1","","10,000","40,000 Dr"],["Mar 10","Service Revenue","GJ1","8,000","","48,000 Dr"],["Mar 15","Rent Expense","GJ1","","3,000","45,000 Dr"]]),
+        ledgerExample("Office Supplies","103",[["Mar 5","Accounts Payable","GJ1","2,000","","2,000 Dr"]]),
+        ledgerExample("Equipment","104",[["Mar 3","Cash","GJ1","10,000","","10,000 Dr"]]),
+        ledgerExample("Accounts Payable","201",[["Mar 5","Office Supplies","GJ1","","2,000","2,000 Cr"]]),
+        ledgerExample("Owner's Capital","301",[["Mar 1","Cash","GJ1","","50,000","50,000 Cr"]]),
+        ledgerExample("Service Revenue","401",[["Mar 10","Cash","GJ1","","8,000","8,000 Cr"]]),
+        ledgerExample("Rent Expense","502",[["Mar 15","Cash","GJ1","3,000","","3,000 Dr"]])
+      ].join("")
+    },
+    {
+      title: "Trial Balance",
+      intro: "List each ledger account's ending balance on its normal side. The debit and credit totals must agree.",
+      body: `<p class="sheet-center"><strong>Trial Balance</strong>As of March 31</p>${staticTable(["Account No.","Account Title","Debit (₱)","Credit (₱)"],[
+        ["101","Cash","45,000",""],["103","Office Supplies","2,000",""],["104","Equipment","10,000",""],["201","Accounts Payable","","2,000"],["301","Owner's Capital","","50,000"],["401","Service Revenue","","8,000"],["502","Rent Expense","3,000",""],["","Totals","60,000","60,000"]
+      ])}`
+    },
+    {
+      title: "Income Statement",
+      intro: "Subtract expenses from service revenue to find net income for the period.",
+      body: `<p class="sheet-center"><strong>Income Statement</strong>For the month ended March 31</p><div class="example-form"><div>Service Revenues</div><div>₱8,000</div><div class="example-sub">Less: Expenses</div><div></div><div class="example-sub">Rent Expense</div><div>3,000</div><div class="example-total">Total Expenses</div><div class="example-total">₱3,000</div><div class="example-total">Net Income</div><div class="example-total">₱5,000</div></div>`
+    },
+    {
+      title: "Changes in Equity",
+      intro: "Start with the owner's investment, add net income, subtract drawings, and calculate ending capital.",
+      body: `<p class="sheet-center"><strong>Statement of Changes in Equity</strong>For the month ended March 31</p><div class="example-form"><div>Beginning capital / investment</div><div>₱50,000</div><div>Add: Additional investment</div><div>0</div><div>Add: Net income</div><div>5,000</div><div class="example-total">Total</div><div class="example-total">₱55,000</div><div>Less: Owner's Drawing</div><div>0</div><div class="example-total">Ending capital</div><div class="example-total">₱55,000</div></div>`
+    },
+    {
+      title: "Balance Sheet",
+      intro: "Show assets, liabilities, and ending equity. Total assets must equal total liabilities and equity.",
+      body: `<p class="sheet-center"><strong>Balance Sheet</strong>As of March 31 · Philippine pesos</p><div class="example-form"><div class="example-section">Assets</div><div></div><div>Cash</div><div>₱45,000</div><div>Office Supplies</div><div>2,000</div><div>Equipment</div><div>10,000</div><div class="example-total">Total assets</div><div class="example-total">₱57,000</div><div class="example-section">Liabilities</div><div></div><div>Accounts Payable</div><div>2,000</div><div class="example-total">Total liabilities</div><div class="example-total">₱2,000</div><div class="example-section">Equity</div><div></div><div>Owner's Capital</div><div>55,000</div><div class="example-total">Total liabilities and equity</div><div class="example-total">₱57,000</div></div>`
+    }
+  ];
 
   function journalHTML() {
     const rows = state.journal.map(j=>`<tr><td>${field(j.date)}</td><td>${field(j.account)}</td><td>${field(j.pr)}</td><td>${field(amount(j.debit),"number")}</td><td>${field(amount(j.credit),"number")}</td><td>${field(j.explanation)}</td><td class="rowlabel">${j.transaction}</td></tr>`);
@@ -99,13 +153,7 @@
       });
       rows.push(`<tr class="gap-row"><td colspan="6"></td></tr>`);
     });
-    const exampleRows = [
-      `<tr><td>Mar 1</td><td>Owner's Capital</td><td>GJ1</td><td>50,000</td><td></td><td>50,000 Dr</td></tr>`,
-      `<tr><td>Mar 3</td><td>Equipment</td><td>GJ1</td><td></td><td>4,000</td><td>46,000 Dr</td></tr>`,
-      `<tr><td>Mar 8</td><td>Service Revenue</td><td>GJ1</td><td>12,000</td><td></td><td>58,000 Dr</td></tr>`
-    ];
-    const example = `<details class="example-card"><summary>See a finished ledger example</summary><p>This illustration shows how Cash (Account No. 101) is posted and how its running debit balance changes. GJ1 means General Journal, page 1.</p><div class="table-wrap"><table><thead><tr><th colspan="4">Account: Cash</th><th colspan="2">Account No. 101</th></tr><tr><th>Date</th><th>Items</th><th>Ref.</th><th>Debit (₱)</th><th>Credit (₱)</th><th>Balance</th></tr></thead><tbody>${exampleRows.join("")}</tbody></table></div></details>`;
-    return example + table(["Date","Items / explanation","Ref.","Debit (₱)","Credit (₱)","Balance"],rows);
+    return table(["Date","Items / explanation","Ref.","Debit (₱)","Credit (₱)","Balance"],rows);
   }
   function trialHTML() {
     const rows=[]; let d=0,c=0;
@@ -129,6 +177,13 @@
     return `<p class="sheet-center"><strong>Balance Sheet</strong>As of ${state.month} ${state.endDay}, 2026 · Philippine pesos</p><div class="form-grid">${statementRows(items)}</div>`;
   }
   const contentFor = [journalHTML,ledgerHTML,trialHTML,incomeHTML,equityHTML,balanceHTML];
+
+  function renderWorkedExample(index) {
+    const example=workedExamples[index];
+    $("example-tabs").innerHTML=workedExamples.map((item,i)=>`<button class="example-tab ${i===index?'active':''}" role="tab" aria-selected="${i===index}" data-example="${i}">${item.title}</button>`).join("");
+    $("example-content").innerHTML=`<p class="example-intro">${example.intro}</p>${example.body}`;
+    $("example-tabs").querySelectorAll("[data-example]").forEach(button=>button.addEventListener("click",()=>renderWorkedExample(Number(button.dataset.example))));
+  }
 
   function render() {
     renderSteps();
@@ -192,4 +247,7 @@
   $("open-chart").addEventListener("click",()=>$("chart-dialog").showModal());
   $("close-chart").addEventListener("click",()=>$("chart-dialog").close());
   $("chart-dialog").addEventListener("click",event=>{if(event.target===$("chart-dialog"))$("chart-dialog").close();});
+  $("open-examples").addEventListener("click",()=>{$("examples-dialog").showModal();renderWorkedExample(0);});
+  $("close-examples").addEventListener("click",()=>$("examples-dialog").close());
+  $("examples-dialog").addEventListener("click",event=>{if(event.target===$("examples-dialog"))$("examples-dialog").close();});
 })();

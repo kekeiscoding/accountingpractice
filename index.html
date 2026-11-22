@@ -8,12 +8,17 @@
   <link rel="stylesheet" href="styles.css" />
 </head>
 <body>
-  <header class="topbar"><a class="brand" href="#" aria-label="Ledger home"><span class="brand-mark">L</span><span>ledger<span class="brand-light">.study</span></span></a><div class="top-tools"><button class="chart-trigger" id="open-chart">Chart of Accounts <span aria-hidden="true">↗</span></button><div class="top-note"><span class="live-dot"></span> ACCOUNTING PRACTICE</div></div></header>
+  <header class="topbar"><a class="brand" href="#" aria-label="Ledger home"><span class="brand-mark">L</span><span>ledger<span class="brand-light">.study</span></span></a><div class="top-tools"><button class="chart-trigger" id="open-examples">Worked examples <span aria-hidden="true">↗</span></button><button class="chart-trigger" id="open-chart">Chart of Accounts <span aria-hidden="true">↗</span></button><div class="top-note"><span class="live-dot"></span> ACCOUNTING PRACTICE</div></div></header>
   <dialog class="chart-dialog" id="chart-dialog" aria-labelledby="chart-title">
     <div class="chart-dialog-head"><div><div class="eyebrow">REFERENCE</div><h2 id="chart-title">Chart of Accounts</h2></div><button class="close-chart" id="close-chart" aria-label="Close chart">×</button></div>
     <table class="chart-table"><thead><tr><th>Account No.</th><th>Account Title</th></tr></thead><tbody>
       <tr><td>101</td><td>Cash</td></tr><tr><td>102</td><td>Accounts Receivable</td></tr><tr><td>103</td><td>Office Supplies</td></tr><tr><td>104</td><td>Equipment</td></tr><tr><td>201</td><td>Accounts Payable</td></tr><tr><td>301</td><td>Owner's Capital</td></tr><tr><td>302</td><td>Owner's Drawing</td></tr><tr><td>401</td><td>Service Revenue</td></tr><tr><td>501</td><td>Salaries Expense</td></tr><tr><td>502</td><td>Rent Expense</td></tr><tr><td>503</td><td>Utilities Expense</td></tr><tr><td>504</td><td>Supplies Expense</td></tr>
     </tbody></table>
+  </dialog>
+  <dialog class="chart-dialog examples-dialog" id="examples-dialog" aria-labelledby="examples-title">
+    <div class="chart-dialog-head"><div><div class="eyebrow">STEP-BY-STEP REFERENCE</div><h2 id="examples-title">Worked examples</h2></div><button class="close-chart" id="close-examples" aria-label="Close examples">×</button></div>
+    <nav class="example-tabs" id="example-tabs" aria-label="Accounting cycle examples"></nav>
+    <div id="example-content" class="example-content"></div>
   </dialog>
   <main class="shell">
     <section class="welcome" id="welcome">
